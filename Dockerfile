@@ -16,4 +16,4 @@ RUN pip3 install -r requirements.txt
 COPY . .
 
 # command to run when image is executed inside a container
-CMD [ "python3", "app.py" ]
+CMD [ "python3", "home.py" ]
