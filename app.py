@@ -1,10 +1,10 @@
-from flask import Flask, render_template
+# Python App
 
-app = Flask(__name__)
+import streamlit as st
+import pandas as pd
+import numpy as np
 
-@app.route('/')
-def home():
-    return render_template('home.html')
-
-if __name__ == '__main__':
-    app.run(debug=True,host='0.0.0.0')
+st.title('Energy Dashboard')
+with st.sidebar:
+    with st.echo():
+        st.write("This code will be printed to the sidebar.")
