@@ -2,4 +2,5 @@ streamlit
 numpy
 pandas
 streamlit-aggrid
+streamlit-vega-lite
 plotly_express
