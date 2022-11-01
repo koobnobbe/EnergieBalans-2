@@ -24,6 +24,7 @@ st.set_page_config( page_title="EnergieBalans - Home",layout="wide"  )
 
 #-------------------------------------------------------------
 
+
 #-------------------------------------------------------------
 # Data Collection
 #-------------------------------------------------------------
@@ -64,17 +65,6 @@ def show_graph_day(df):
    fig = px.histogram(df, x='day', y='cons')
    st.plotly_chart(fig)
 
-def show_graph_vegaslite(df):
-   st.vega_lite_chart(df,
-                      {
-                         'mark': {'type': 'bar', 'tooltip': True},
-                         'encoding': {
-                            'x': {'field': 'day', 'type': 'quantitative'},
-                            'y': {'field': 'cons', 'type': 'quantitative'},
-                            #   'size': {'field': 'c', 'type': 'quantitative'},
-                            #   'color': {'field': 'c', 'type': 'quantitative'},
-                         },
-                      })
 
 def show_Graph_bar(df, title):
    df_now = df.query('year==' + str(selectedYear))
@@ -145,6 +135,32 @@ def show_Graph_circle_year(df, title):
    fig = px.pie(df, names='year', values='cons',title=title)
    st.plotly_chart(fig)
 
+def show_graph_bar_diff(df, title, year, month):
+    df = df[['year', 'month', 'day', 'cons']].copy()
+    df_now = df.query('year==' + str(year)).query('month==' + str(month))
+    df_lastyear = df.query('year==' + str(year - 1)).query('month==' + str(month))
+    df_lastyear.rename(columns={'cons': 'lastyear'}, inplace=True)
+    df_lastyear.drop(['year'], axis=1, inplace=True)
+    df_diff = pd.merge(df_now, df_lastyear, on=['month', 'day'], how="outer")
+
+    df_diff['diff'] = df_diff['cons'] - df_diff['lastyear']
+
+    fig = make_subplots(specs=[[{"secondary_y": True}]])
+    fig.add_trace(
+       go.Bar(
+          x=df_diff['day']
+          , y=df_diff['diff']
+          , name='Opbrengst ' + str(year)
+          , marker={'color': df_diff['diff'], 'colorscale': 'RdYlGn'}
+       )
+       , secondary_y=False
+    )
+
+    fig.update_layout( title_text='Verschil opbrengst tov vorig jaar') # Adding title text to the figure
+    fig.update_xaxes(title_text="<b>dag van de Maand </b>") # Naming x-axis
+    fig.update_yaxes(title_text="<b>Energie (kwh)</b>", secondary_y=False) # Naming y-axes
+    st.write(fig)
+
 
 # -------------------------------------------------------------
 # sidebar presentation
@@ -172,3 +188,5 @@ with col1:
 with col2:
    show_Graph_circle_year(df2, 'Stroomverbruik per jaar')
 
+df3 = p1.df_powergas_day[['year','month','day','cons']]
+show_graph_bar_diff(df3, 'Verschil stroomverbruik ', selectedYear, selectedMonth)
