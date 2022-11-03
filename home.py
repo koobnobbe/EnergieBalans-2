@@ -1,6 +1,7 @@
 # Python App
 ################
 import streamlit as st
+from streamlit_extras.dataframe_explorer import dataframe_explorer
 import pandas as pd
 import numpy as np
 
@@ -19,8 +20,6 @@ from st_aggrid import GridOptionsBuilder, AgGrid, GridUpdateMode, DataReturnMode
 ######################
 st.set_page_config( page_title="EnergieBalans - Home", layout="wide")
 # Use the full page instead of a narrow central column
-
-
 ##################
 # Data Collection
 ##################
@@ -46,12 +45,16 @@ with st.sidebar:
 #st.write(p1.df_powergas_day.copy())
 st.write('Today : ' + str(const.now))
 st.write('First date of the week : ' + str(const.start_of_week))
-st.write(st.secrets["wallbox"]["username"])
-st.write(calc.df_power_combined_day)
+#st.write(st.secrets["wallbox"]["username"])
+#st.write(calc.df_power_combined_day)
 
-st.write(calc.df_energy)
+#filtered_df = dataframe_explorer(calc.df_power_combined_day[['timestamp','int_low']])
+#st.dataframe(filtered_df)
+#st.write(calc.df_energy)\
 
-df_graph = calc.df_energy.reset_index().query('year == '+str(selectedYear)+' and month == '+str(selectedMonth)+' and action != "Balans" and type != "Gas"')
+st.metric(label= 'Temp', value= 21, delta= 3, delta_color='inverse')
 
-sobj.show_graph(df_graph,'timestamp','amount','source')
+df_graph = calc.df_energy.reset_index().query('year == '+str(selectedYear)+' and month == '+str(selectedMonth)+' and action != "Balans"')
+
+sobj.show_graph(df_graph,'date','amount','name')
 sobj.show_bargraph(calc.df_energy.reset_index() , selectedYear, selectedMonth)

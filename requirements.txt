@@ -1,6 +1,7 @@
 streamlit
 streamlit-aggrid
 streamlit-vega-lite
+streamlit-extras
 numpy
 pandas
 plotly
