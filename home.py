@@ -5,9 +5,13 @@ import pandas as pd
 import numpy as np
 
 from lib import api_p1mon as p1
+from lib import api_wallbox as wb
+# from lib import api_solaredge as slr
+from lib import calculations as calc
 from lib import constants as const
 from lib import streamlit_objects as sobj
-#from lib import api_solaredge as slr
+from lib import utils as utils
+from st_aggrid import GridOptionsBuilder, AgGrid, GridUpdateMode, DataReturnMode
 ################
 
 ######################
@@ -26,8 +30,6 @@ def load_p1_powergas_day(reporting_year, reporting_month):
    df= df.query('year==' + reporting_year).query('month==' + reporting_month)
    return df
 
-
-
 ######################
 # sidebar presentation
 ######################
@@ -40,4 +42,16 @@ with st.sidebar:
 #########################
 # mainscreen presentation
 #########################
-st.write(str(selectedYear)+'-'+str(selectedMonth))
+#st.write(str(selectedYear)+'-'+str(selectedMonth))
+#st.write(p1.df_powergas_day.copy())
+st.write('Today : ' + str(const.now))
+st.write('First date of the week : ' + str(const.start_of_week))
+st.write(st.secrets["wallbox"]["username"])
+st.write(calc.df_power_combined_day)
+
+st.write(calc.df_energy)
+
+df_graph = calc.df_energy.reset_index().query('year == '+str(selectedYear)+' and month == '+str(selectedMonth)+' and action != "Balans" and type != "Gas"')
+
+sobj.show_graph(df_graph,'timestamp','amount','source')
+sobj.show_bargraph(calc.df_energy.reset_index() , selectedYear, selectedMonth)

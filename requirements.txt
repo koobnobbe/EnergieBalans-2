@@ -1,7 +1,9 @@
 streamlit
+streamlit-aggrid
+streamlit-vega-lite
 numpy
 pandas
 plotly
-streamlit-aggrid
-streamlit-vega-lite
 plotly_express
+solaredge
+wallbox
